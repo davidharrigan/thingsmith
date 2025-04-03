@@ -1,0 +1,89 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "pyfinity"
+version = "0.1.0"
+description = ""
+authors = ["David Harrigan <davidharrigan@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+build123d = ">=0.9.0,<0.10"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.11.2"
+mypy = "^1.15.0"
+
+[tool.pyright]
+# see https://microsoft.github.io/pyright/#/configuration?id=pyright-configuration
+include = ["src"]
+exclude = ["**/node_modules", "**/__pycache__", "**/.venv"]
+reportMissingImports = true
+reportWildcardImportFromLibrary = false
+reportUnusedImport = false
+typeCheckingMode = "basic"
+
+[tool.ruff]
+lint.fixable = ["ALL"]
+lint.select = ["ALL"]
+lint.ignore = [
+  "D203",    # One blank line before class docstring
+  "D212",    # Multi-line summary first line
+  "PLR0913", # Too many arguments
+  "Q000",    # Single quotes found but double quotes preferred
+
+  "TD",
+  "FIX",
+
+  # comment related
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D105",
+  "D107",
+]
+line-length = 120
+show-fixes = true
+src = ["src"]
+target-version = "py312"
+
+
+[tool.ruff.lint.flake8-copyright]
+author = "David Harrigan"
+
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = "double"
+multiline-quotes = "double"
+
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+
+[tool.ruff.lint.per-file-ignores]
+# https://beta.ruff.rs/docs/rules/
+"__init__.py" = ["F401", "F403", "F405"]
+"tests/*" = ["ANN", "ARG", "INP001", "S101"]
+"logger.py" = ["N815"]
+
+
+[tool.ruff.lint.pylint]
+max-args = 15
+max-branches = 20
+max-returns = 10
+max-statements = 80
+
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
