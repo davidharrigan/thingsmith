@@ -7,7 +7,7 @@ format:
 
 lint:
 	poetry run ruff check
-	poetry run pyright
+	poetry run mypy
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
