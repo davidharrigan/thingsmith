@@ -19,10 +19,11 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.11.2"
 mypy = "^1.15.0"
+ocp-vscode = "^2.6.4"
 
 [tool.pyright]
 # see https://microsoft.github.io/pyright/#/configuration?id=pyright-configuration
-include = ["src"]
+include = ["pyfinity"]
 exclude = ["**/node_modules", "**/__pycache__", "**/.venv"]
 reportMissingImports = true
 reportWildcardImportFromLibrary = false
@@ -51,7 +52,7 @@ lint.ignore = [
 ]
 line-length = 120
 show-fixes = true
-src = ["src"]
+src = ["pyfinity"]
 target-version = "py312"
 
 
