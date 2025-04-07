@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from math import ceil
+
 from build123d import (
     Align,
     Axis,
@@ -23,6 +25,10 @@ from pyfinity._gridfinity.profile import BaseplateSections, Profile
 from pyfinity._gridfinity.spec import GF
 
 
+def num_grid_for_mm(length_mm: float) -> int:
+    return ceil(length_mm / GF.GRID_UNIT)
+
+
 class Block(BasePartObject):
     def __init__(
         self,
@@ -36,8 +42,7 @@ class Block(BasePartObject):
                 Profile(sections)
 
             with BuildSketch() as grid:
-                RectangleRounded(GF.GRID_UNIT, GF.GRID_UNIT,
-                                 GF.BLOCK_OUTER_RADIUS)
+                RectangleRounded(GF.GRID_UNIT, GF.GRID_UNIT, GF.BLOCK_OUTER_RADIUS)
             extrude(amount=sections.total_height)
 
             path = grid.wires().sort_by(Axis.Z)[-1]
@@ -63,8 +68,7 @@ class BlockGrid(BasePartObject):
     ) -> None:
         locations: list[Location] = []
         for row in range(x):
-            locations.extend(
-                [Location((row * GF.GRID_UNIT, col * GF.GRID_UNIT)) for col in range(y)])
+            locations.extend([Location((row * GF.GRID_UNIT, col * GF.GRID_UNIT)) for col in range(y)])
 
         with BuildPart() as part:
             with Locations(locations):
@@ -74,8 +78,7 @@ class BlockGrid(BasePartObject):
             with BuildPart(top_face, mode=Mode.SUBTRACT):
                 with BuildSketch():
                     outer = top_face.outer_wire()
-                    inner = outer.fillet_2d(
-                        GF.BLOCK_OUTER_RADIUS, outer.vertices())
+                    inner = outer.fillet_2d(GF.BLOCK_OUTER_RADIUS, outer.vertices())
                     make_face(outer.edges())
                     make_face(inner.edges(), mode=Mode.SUBTRACT)
                 extrude(amount=GF.HEIGHT_UNIT)

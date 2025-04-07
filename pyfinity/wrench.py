@@ -15,6 +15,7 @@ from build123d import (
     BuildLine,
     BuildPart,
     BuildSketch,
+    Circle,
     Locations,
     Mode,
     Polyline,
@@ -29,6 +30,7 @@ from pyfinity._gridfinity import (
     GF,
     BlockGrid,
 )
+from pyfinity._gridfinity.block import num_grid_for_mm
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -42,8 +44,8 @@ class WrenchUnit(Enum):
 @dataclass
 class Wrench:
     size: int | float | Fraction | str
-    handle_width: float = 0
-    handle_depth: float = 0
+    grip_width_mm: float = 0
+    unit: WrenchUnit = WrenchUnit.METRIC
 
     def __post_init__(self) -> None:
         if not self.size:
@@ -52,18 +54,19 @@ class Wrench:
         if isinstance(self.size, str):
             self.size = Fraction(self.size)
 
+        if not self.grip_width_mm:
+            if self.unit == WrenchUnit.METRIC:
+                self.grip_width_mm = self.__approximate_grip_width(float(self.size))
+            else:
+                raise NotImplementedError
 
-def approximate_wrench_dimensions(wrench_size_mm: float) -> tuple[float, float]:
-    reference_size = 10.0
-    reference_width = 9.0
-    reference_depth = 3.0
+    @staticmethod
+    def __approximate_grip_width(wrench_size_mm: float) -> float:
+        reference_size = 10.0
+        reference_width = 9.0
+        scaling_factor = (wrench_size_mm / reference_size) ** 0.6
 
-    scaling_factor = (wrench_size_mm / reference_size) ** 0.6
-
-    handle_width = reference_width * scaling_factor
-    handle_depth = reference_depth * scaling_factor
-
-    return (round(handle_width, 1), round(handle_depth, 1))
+        return reference_width * scaling_factor
 
 
 class WrenchInsertProfile(BaseSketchObject):
@@ -77,12 +80,14 @@ class WrenchInsertProfile(BaseSketchObject):
         align: Align | tuple[Align, Align] | None = None,
         mode: Mode = Mode.ADD,
     ) -> None:
-        wrench_width, _ = approximate_wrench_dimensions(float(wrench.size))  # TODO
+        wrench_width = wrench.grip_width_mm
 
-        long_width = wrench_width / math.sqrt(2) + 1  # padding
-        short_width = long_width * 0.6
-        width = long_width + short_width
-        height = width
+        width = wrench_width + 1  # padding
+        height = wrench_width + 2  # padding
+        angle_degrees = 40
+        angle_radians = math.radians(angle_degrees)
+        bottom_width = wrench_width * (2 / 5)
+        angle_height = (width - bottom_width) * math.tan(angle_radians)
 
         lip = 2
         l0 = (lip, 0)
@@ -90,8 +95,8 @@ class WrenchInsertProfile(BaseSketchObject):
 
         p0 = (0, 0)  # top left
         p1 = (0, -height)  # bottom left
-        p2 = (short_width, -height)  # bottm middle
-        p3 = (width, -short_width)  # bottom right
+        p2 = (bottom_width, -height)  # bottm middle
+        p3 = (width, -angle_height)  # bottom right
         p4 = (width, 0)  # top right
 
         with BuildSketch() as profile:
@@ -127,12 +132,12 @@ class WrenchInsertProfile(BaseSketchObject):
 
 @dataclass
 class OrganizerSpec:
-    x: int = 2
-    y: int = 3
+    grid_x: int = 2
+    min_grid_y: int = 1
+    min_insert_offset: float = 2 * MM
     radius: float = 3
-    insert_offset: float = 5 * MM
-    min_spacing: float = 10 * MM
-    unit: WrenchUnit = WrenchUnit.METRIC
+    front_offset: float = 3 * MM
+    back_offset: float = 3 * MM
 
 
 class OrganizerFrame(BasePartObject):
@@ -141,19 +146,20 @@ class OrganizerFrame(BasePartObject):
 
     def __init__(
         self,
+        grid_x: int,
+        grid_y: int,
+        radius: float,
         height: float,
-        spec: OrganizerSpec | None = None,
         rotation: RotationLike = (0, 0, 0),
         align: Align | tuple[Align, Align, Align] | None = None,
         mode: Mode = Mode.ADD,
     ) -> None:
-        spec = spec if spec else OrganizerSpec()
-        self.__frame_width = spec.x * GF.GRID_UNIT
-        self.__frame_height = spec.y * GF.GRID_UNIT
+        self.__frame_width = grid_x * GF.GRID_UNIT
+        self.__frame_height = grid_y * GF.GRID_UNIT
         with BuildPart() as part:
-            base = BlockGrid(spec.x, spec.y)
+            base = BlockGrid(grid_x, grid_y)
             with BuildSketch(base.build_surface()) as base:
-                RectangleRounded(self.frame_width, self.frame_height, spec.radius)
+                RectangleRounded(self.frame_width, self.frame_height, radius)
             extrude(amount=height)
         if not part.part:
             return
@@ -171,7 +177,7 @@ class OrganizerFrame(BasePartObject):
 class Organizer(BasePartObject):
     def __init__(
         self,
-        wrench_set: Iterable[Wrench],
+        wrench_set: list[Wrench],
         spec: OrganizerSpec | None = None,
         rotation: RotationLike = (0, 0, 0),
         align: Align | tuple[Align, Align, Align] | None = None,
@@ -179,27 +185,40 @@ class Organizer(BasePartObject):
     ) -> None:
         spec = spec if spec else OrganizerSpec()
 
-        with BuildPart() as part:
-            profiles = WrenchInsertProfile.from_collection(
-                wrench_set,
-                align=(Align.MAX, Align.MAX),
-                mode=Mode.PRIVATE,
-            )
-            min_height = max([p.profile_height for p in profiles])
-            height = min_height + 3
+        profiles = WrenchInsertProfile.from_collection(
+            wrench_set,
+            align=(Align.MAX, Align.MAX),
+            mode=Mode.PRIVATE,
+        )
 
-            frame = OrganizerFrame(height, spec, align=Align.MIN)
+        min_height = max([p.profile_height for p in profiles])
+        height = min_height + 3
+        width_sum = sum([p.profile_width for p in profiles])
+        grid_y = max(
+            num_grid_for_mm(spec.front_offset + width_sum + (len(wrench_set) + 2) * spec.min_insert_offset),
+            spec.min_grid_y,
+        )
+        offset = ((grid_y * GF.GRID_UNIT + spec.front_offset + spec.back_offset) - width_sum) / (len(profiles) + 2)
+
+        with BuildPart() as part:
+            frame = OrganizerFrame(
+                height=height,
+                grid_x=spec.grid_x,
+                grid_y=grid_y,
+                radius=spec.radius,
+                align=Align.MIN,
+            )
 
             face = frame.faces().filter_by(Axis.X).sort_by(Axis.X)[-1]
             with BuildSketch(face):
                 distance = -frame.frame_height / 2 + profiles[0].profile_width
-                distance += spec.insert_offset - 1
+                distance += spec.front_offset + offset
                 for p in profiles:
                     h = height / 2 + 1.5
                     with Locations((distance, h)):
-                        distance += p.profile_width + spec.insert_offset
+                        distance += p.profile_width + offset
                         add(p)
-            extrude(amount=-spec.x * GF.GRID_UNIT, mode=Mode.SUBTRACT)
+            extrude(amount=-spec.grid_x * GF.GRID_UNIT, mode=Mode.SUBTRACT)
 
         if not part.part:
             return
