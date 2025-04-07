@@ -15,14 +15,17 @@ from build123d import (
     BuildLine,
     BuildPart,
     BuildSketch,
-    Circle,
     Locations,
     Mode,
     Polyline,
+    RadiusArc,
+    Rectangle,
     RectangleRounded,
     RotationLike,
     add,
+    export_stl,
     extrude,
+    fillet,
     make_face,
 )
 
@@ -80,7 +83,7 @@ class WrenchInsertProfile(BaseSketchObject):
         align: Align | tuple[Align, Align] | None = None,
         mode: Mode = Mode.ADD,
     ) -> None:
-        wrench_width = wrench.grip_width_mm
+        wrench_width = round(wrench.grip_width_mm, 2)
 
         width = wrench_width + 1  # padding
         height = wrench_width + 2  # padding
@@ -89,9 +92,11 @@ class WrenchInsertProfile(BaseSketchObject):
         bottom_width = wrench_width * (2 / 5)
         angle_height = (width - bottom_width) * math.tan(angle_radians)
 
-        lip = 2
-        l0 = (lip, 0)
-        l1 = (0, -lip / 2)
+        lip_w = 3
+        lip_h = 3
+        l0 = (lip_w, 0)
+        l1 = (lip_w, -lip_h / 2)
+        l2 = (0, -lip_h)
 
         p0 = (0, 0)  # top left
         p1 = (0, -height)  # bottom left
@@ -101,7 +106,9 @@ class WrenchInsertProfile(BaseSketchObject):
 
         with BuildSketch() as profile:
             with BuildLine():
-                Polyline(l0, l1, p0, p1, p2, p3, p4, close=True)
+                Polyline(l0, l1, l2)
+                RadiusArc(l2, p0, -100)
+                Polyline(p0, p1, p2, p3, p4, l0)
             make_face()
 
         self.__profile_width = width
@@ -136,8 +143,8 @@ class OrganizerSpec:
     min_grid_y: int = 1
     min_insert_offset: float = 2 * MM
     radius: float = 3
-    front_offset: float = 3 * MM
-    back_offset: float = 3 * MM
+    front_offset: float = 0 * MM
+    back_offset: float = 0 * MM
 
 
 class OrganizerFrame(BasePartObject):
@@ -198,7 +205,8 @@ class Organizer(BasePartObject):
             num_grid_for_mm(spec.front_offset + width_sum + (len(wrench_set) + 2) * spec.min_insert_offset),
             spec.min_grid_y,
         )
-        offset = ((grid_y * GF.GRID_UNIT + spec.front_offset + spec.back_offset) - width_sum) / (len(profiles) + 2)
+        offset = ((grid_y * GF.GRID_UNIT + spec.front_offset + spec.back_offset) - width_sum) / (len(profiles) + 0)
+        offset = round(offset, 1)
 
         with BuildPart() as part:
             frame = OrganizerFrame(
@@ -210,15 +218,21 @@ class Organizer(BasePartObject):
             )
 
             face = frame.faces().filter_by(Axis.X).sort_by(Axis.X)[-1]
+            show_object(face)
             with BuildSketch(face):
-                distance = -frame.frame_height / 2 + profiles[0].profile_width
+                distance = -frame.frame_height / 2 + (profiles[0].profile_width)
                 distance += spec.front_offset + offset
                 for p in profiles:
                     h = height / 2 + 1.5
                     with Locations((distance, h)):
+                        added = add(p)
+                        print(p.profile_width)
                         distance += p.profile_width + offset
-                        add(p)
+                        fillet_vertices = added.vertices().filter_by(lambda v: v.Y != h)
+                        fillet(fillet_vertices, radius=1)
             extrude(amount=-spec.grid_x * GF.GRID_UNIT, mode=Mode.SUBTRACT)
+            e = part.edges().group_by(Axis.Z)[-1].filter_by(Axis.X)
+            fillet(e, radius=0.3)
 
         if not part.part:
             return
@@ -230,8 +244,18 @@ if __name__ == "__main__":
     try:
         from ocp_vscode import show_object
 
-        ws = [Wrench(10), Wrench(13), Wrench(14), Wrench(15), Wrench(17)]
-        o = Organizer(ws)
+        ws = [Wrench(6), Wrench(7), Wrench(8), Wrench(10), Wrench(13), Wrench(14), Wrench(15), Wrench(17)]
+
+        with BuildPart() as part:
+            o = Organizer(ws)
+            face = o.faces().filter_by(Axis.Y).sort_by(Axis.Y)[0]
+            with BuildSketch(face) as skt:
+                Rectangle(3, 20)
+            extrude(amount=-200, mode=Mode.INTERSECT)
         show_object(o)
+
+        export_stl(o, "organizer.stl")
+        export_stl(part.part, "cutout.stl")
+
     except ImportError:
         pass
