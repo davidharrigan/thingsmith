@@ -9,9 +9,10 @@ from build123d import (
     BuildSketch,
     Locations,
     Mode,
+    Plane,
     RectangleRounded,
     RotationLike,
-    add,
+    Select,
     extrude,
     fillet,
 )
@@ -80,23 +81,17 @@ class Organizer(BasePartObject):
     ) -> None:
         spec = spec if spec else OrganizerSpec()
 
-        profiles = InsertProfile.from_collection(
-            [w.grip_width_mm for w in wrench_set],
-            align=(Align.MAX, Align.MAX),
-            mode=Mode.PRIVATE,
-        )
-
-        min_height = max([p.profile_height for p in profiles])
+        min_height = max([w.profile_height for w in wrench_set])
         height = min_height + 3
-        width_sum = sum([p.profile_width for p in profiles])
+        width_sum = sum([w.profile_width for w in wrench_set])
         grid_y = max(
             num_grid_for_mm(spec.front_offset + width_sum + (len(wrench_set) + 2) * spec.min_insert_offset),
             spec.min_grid_y,
         )
-        offset = ((grid_y * GF.GRID_UNIT + spec.front_offset + spec.back_offset) - width_sum) / (len(profiles) + 0)
+        offset = ((grid_y * GF.GRID_UNIT + spec.front_offset + spec.back_offset) - width_sum) / (len(wrench_set) + 2)
 
         with BuildPart() as part:
-            frame = OrganizerFrame(
+            OrganizerFrame(
                 height=height,
                 grid_x=spec.grid_x,
                 grid_y=grid_y,
@@ -104,20 +99,20 @@ class Organizer(BasePartObject):
                 align=Align.MIN,
             )
 
-            face = frame.faces().filter_by(Axis.X).sort_by(Axis.X)[-1]
-            with BuildSketch(face):
-                distance = -frame.frame_height / 2 + (profiles[0].profile_width)
-                distance += spec.front_offset + offset
-                for p in profiles:
-                    h = height / 2 + 1.5
+            with BuildSketch(Plane.XZ):
+                distance = offset + spec.front_offset
+                for w in wrench_set:
+                    h = (height - w.profile_height) + (height / 2) - 1
                     with Locations((distance, h)):
-                        added = add(p)
+                        p = InsertProfile(w.profile_width, w.profile_height, align=((Align.MIN, Align.MIN)))
                         distance += p.profile_width + offset
-                        # fillet_vertices = added.vertices().filter_by(lambda v: v != v.Y)
-                        # fillet(fillet_vertices, radius=1)
+
             extrude(amount=-spec.grid_x * GF.GRID_UNIT, mode=Mode.SUBTRACT)
-            e = part.edges().group_by(Axis.Z)[-1].filter_by(Axis.X)
-            fillet(e, radius=0.3)
+            edges = part.edges(Select.LAST)
+            top_edges = edges.group_by(Axis.Z)[-1]
+            inner_edges = edges.filter_by(lambda v: v not in top_edges).filter_by(Axis.Y)
+            fillet(top_edges, radius=0.4)
+            fillet(inner_edges, radius=0.3)
 
         if not part.part:
             return

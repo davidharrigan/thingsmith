@@ -34,3 +34,11 @@ class Wrench:
         scaling_factor = (wrench_size_mm / reference_size) ** 0.6
 
         return reference_width * scaling_factor
+
+    @property
+    def profile_width(self):
+        return self.grip_width_mm + 1  # padding
+
+    @property
+    def profile_height(self):
+        return self.grip_width_mm + 2  # padding

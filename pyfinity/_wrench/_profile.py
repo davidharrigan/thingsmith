@@ -12,7 +12,6 @@ from build123d import (
     RadiusArc,
     make_face,
 )
-from ocp_vscode import show_object
 
 
 class InsertProfile(BaseSketchObject):
@@ -21,16 +20,15 @@ class InsertProfile(BaseSketchObject):
 
     def __init__(
         self,
-        wrench_width: float,
+        width: float,
+        height: float,
         rotation: float = 0,
         align: Align | tuple[Align, Align] | None = None,
         mode: Mode = Mode.ADD,
     ) -> None:
-        width = wrench_width + 1  # padding
-        height = wrench_width + 2  # padding
         angle_degrees = 40
         angle_radians = math.radians(angle_degrees)
-        bottom_width = wrench_width * (2 / 5)
+        bottom_width = width * (2 / 5)
         angle_height = (width - bottom_width) * math.tan(angle_radians)
 
         lip_w = 3
@@ -66,26 +64,13 @@ class InsertProfile(BaseSketchObject):
 
     @staticmethod
     def from_collection(
-        wrench_widths: list[float],
+        dimensions: list[tuple[float, float]],
         rotation: float = 0,
         align: Align | tuple[Align, Align] | None = None,
         mode: Mode = Mode.ADD,
     ) -> list[InsertProfile]:
         profiles: list[InsertProfile] = []
-        for w in wrench_widths:
-            profile = InsertProfile(w, rotation, align, mode)
+        for w, h in dimensions:
+            profile = InsertProfile(w, h, rotation, align, mode)
             profiles.append(profile)
         return profiles
-
-
-class InsertProfileSet(BaseSketchObject):
-    def __init__(
-        self,
-        offset: float = 0,
-        profiles: list[InsertPrfile],
-        rotation: float = 0,
-        align: Align | tuple[Align, Align] | None = None,
-        mode: Mode = Mode.ADD,
-    ) -> None:
-        with BuildSketch():
-            pass
