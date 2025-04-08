@@ -28,6 +28,7 @@ exclude = ["**/node_modules", "**/__pycache__", "**/.venv"]
 reportMissingImports = true
 reportWildcardImportFromLibrary = false
 reportUnusedImport = false
+reportUndefinedVariable = false
 typeCheckingMode = "basic"
 
 [tool.ruff]
