@@ -8,10 +8,13 @@ from build123d import (
     BuildLine,
     BuildSketch,
     Mode,
+    Plane,
     Polyline,
     RadiusArc,
     make_face,
 )
+
+from pyfinity._wrench._wrench import Wrench
 
 
 class InsertProfile(BaseSketchObject):
@@ -50,27 +53,4 @@ class InsertProfile(BaseSketchObject):
                 Polyline(p0, p1, p2, p3, p4, l0)
             make_face()
 
-        self.__profile_width = width
-        self.__profile_height = height
         super().__init__(profile.face(), rotation, align, mode)
-
-    @property
-    def profile_width(self) -> float:
-        return self.__profile_width
-
-    @property
-    def profile_height(self) -> float:
-        return self.__profile_height
-
-    @staticmethod
-    def from_collection(
-        dimensions: list[tuple[float, float]],
-        rotation: float = 0,
-        align: Align | tuple[Align, Align] | None = None,
-        mode: Mode = Mode.ADD,
-    ) -> list[InsertProfile]:
-        profiles: list[InsertProfile] = []
-        for w, h in dimensions:
-            profile = InsertProfile(w, h, rotation, align, mode)
-            profiles.append(profile)
-        return profiles
