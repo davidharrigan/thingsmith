@@ -137,7 +137,7 @@ class Organizer(BasePartObject):
                 for i, w in enumerate(wrench_set):
                     face = topf[i]
                     with BuildSketch(face):
-                        Text(f"{w.size}mm", 6, rotation=-90)
+                        Text(f"{w}", 6, rotation=-90)
                     extrude(amount=0.75)
             if labels.part:
                 labels.part.color = Color("white")

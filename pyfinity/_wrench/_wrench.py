@@ -23,7 +23,11 @@ class Wrench:
 
         if not self.grip_width_mm:
             if self.unit == WrenchUnit.METRIC:
-                self.grip_width_mm = self.__approximate_grip_width(float(self.size))
+                self.grip_width_mm = self.__approximate_grip_width(
+                    float(self.size))
+            elif self.unit == WrenchUnit.SAE:
+                self.grip_width_mm = self.__approximate_grip_width(
+                    self.__in_to_mm(float(self.size)))
             else:
                 raise NotImplementedError
 
@@ -32,8 +36,11 @@ class Wrench:
         reference_size = 10.0
         reference_width = 9.0
         scaling_factor = (wrench_size_mm / reference_size) ** 0.6
-
         return reference_width * scaling_factor
+
+    @staticmethod
+    def __in_to_mm(size_in: float) -> float:
+        return size_in * 25.4
 
     @property
     def profile_width(self):
@@ -42,3 +49,7 @@ class Wrench:
     @property
     def profile_height(self):
         return self.grip_width_mm + 2  # padding
+
+    def __str__(self) -> str:
+        unit = "mm" if self.unit == WrenchUnit.METRIC else '"'
+        return f"{self.size}{unit}"
