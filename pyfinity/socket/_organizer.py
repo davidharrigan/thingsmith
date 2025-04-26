@@ -37,8 +37,9 @@ class OrganizerSpec:
     min_grid_x: int = 1
     grid_y: int = 1
     radius: float = 3
-    height: float = 10
+    height: float = 10 * MM # on top of the grid base
 
+    insert_depth: float = 5 * MM
     insert_labels: bool = True
     insert_labels_offset: float = 2 * MM
 
@@ -97,12 +98,12 @@ class Organizer(BasePartObject):
         spec = InternalSpec.from_spec(socket_set, spec or OrganizerSpec())
 
         base = self._build_base(spec)
-        if base:
-            self.base = base
-            parts.append(self.base.part)
+        if not base:
+            return
+        parts.append(base.part)
 
         if spec.insert_labels:
-            labels = self._build_insert_labels(spec)
+            labels = self._build_insert_labels(spec, base)
             if labels:
                 parts.append(labels.part)
 
@@ -137,7 +138,7 @@ class Organizer(BasePartObject):
                     with Locations((distance, spec.center_offset)):
                         Circle(radius=(s.diameter_mm + spec.diameter_offset) /
                                2, align=(Align.MIN, Align.CENTER))
-            extrude(amount=-10, mode=Mode.SUBTRACT, target=base.part)
+            extrude(amount=-spec.insert_depth, mode=Mode.SUBTRACT, target=base.part)
             edges = base.edges(Select.LAST).group_by(Axis.Z)
             fillet(edges[0], radius=spec.insert_fillet)
             fillet(edges[-1], radius=spec.insert_fillet)
@@ -149,8 +150,8 @@ class Organizer(BasePartObject):
         base.part.label = "Base"
         return base
 
-    def _build_insert_labels(self, spec: InternalSpec, color: Color = default_label_color) -> BuildPart | None:
-        top_face = self.base.faces().sort_by(Axis.Z)[-1]
+    def _build_insert_labels(self, spec: InternalSpec, base: BuildPart, color: Color = default_label_color) -> BuildPart | None:
+        top_face = base.faces().sort_by(Axis.Z)[-1]
         origin = top_face.edges().group_by(
             Axis.X)[0].sort_by(Axis.Y)[0].vertices()[0]
 
