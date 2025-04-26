@@ -12,7 +12,6 @@ from build123d import (
     Mode,
     Part,
     Plane,
-    RectangleRounded,
     RotationLike,
     Select,
     Text,
@@ -22,11 +21,11 @@ from build123d import (
 
 from pyfinity._gridfinity import (
     GF,
-    BlockGrid,
+    OrganizerFrame,
 )
 from pyfinity._gridfinity.block import num_grid_for_mm
-from pyfinity._wrench._profile import InsertProfile
-from pyfinity._wrench._wrench import Wrench
+from pyfinity.wrench._profile import InsertProfile
+from pyfinity.wrench._wrench import Wrench
 
 
 @dataclass
@@ -38,40 +37,6 @@ class OrganizerSpec:
     front_offset: float = 0 * MM
     back_offset: float = 0 * MM
     add_labels: bool = True
-
-
-class OrganizerFrame(BasePartObject):
-    __frame_height: float = 0
-    __frame_width: float = 0
-
-    def __init__(
-        self,
-        grid_x: int,
-        grid_y: int,
-        radius: float,
-        height: float,
-        rotation: RotationLike = (0, 0, 0),
-        align: Align | tuple[Align, Align, Align] | None = None,
-        mode: Mode = Mode.ADD,
-    ) -> None:
-        self.__frame_height = grid_x * GF.GRID_UNIT
-        self.__frame_width = grid_y * GF.GRID_UNIT
-        with BuildPart() as part:
-            base = BlockGrid(grid_x, grid_y)
-            with BuildSketch(base.build_surface()) as base:
-                RectangleRounded(self.frame_height, self.frame_width, radius)
-            extrude(amount=height)
-        if not part.part:
-            return
-        super().__init__(part.part, rotation, align, mode)
-
-    @property
-    def frame_height(self) -> float:
-        return self.__frame_height
-
-    @property
-    def frame_width(self) -> float:
-        return self.__frame_width
 
 
 class Organizer(BasePartObject):

@@ -8,19 +8,13 @@ from build123d import (
     BuildLine,
     BuildSketch,
     Mode,
-    Plane,
     Polyline,
     RadiusArc,
     make_face,
 )
 
-from pyfinity._wrench._wrench import Wrench
-
 
 class InsertProfile(BaseSketchObject):
-    __profile_width: float
-    __profile_height: float
-
     def __init__(
         self,
         width: float,

@@ -42,7 +42,8 @@ class Block(BasePartObject):
                 Profile(sections)
 
             with BuildSketch() as grid:
-                RectangleRounded(GF.GRID_UNIT, GF.GRID_UNIT, GF.BLOCK_OUTER_RADIUS)
+                RectangleRounded(GF.GRID_UNIT, GF.GRID_UNIT,
+                                 GF.BLOCK_OUTER_RADIUS)
             extrude(amount=sections.total_height)
 
             path = grid.wires().sort_by(Axis.Z)[-1]
@@ -68,7 +69,8 @@ class BlockGrid(BasePartObject):
     ) -> None:
         locations: list[Location] = []
         for row in range(x):
-            locations.extend([Location((row * GF.GRID_UNIT, col * GF.GRID_UNIT)) for col in range(y)])
+            locations.extend(
+                [Location((row * GF.GRID_UNIT, col * GF.GRID_UNIT)) for col in range(y)])
 
         with BuildPart() as part:
             with Locations(locations):
@@ -78,7 +80,8 @@ class BlockGrid(BasePartObject):
             with BuildPart(top_face, mode=Mode.SUBTRACT):
                 with BuildSketch():
                     outer = top_face.outer_wire()
-                    inner = outer.fillet_2d(GF.BLOCK_OUTER_RADIUS, outer.vertices())
+                    inner = outer.fillet_2d(
+                        GF.BLOCK_OUTER_RADIUS, outer.vertices())
                     make_face(outer.edges())
                     make_face(inner.edges(), mode=Mode.SUBTRACT)
                 extrude(amount=GF.HEIGHT_UNIT)

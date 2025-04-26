@@ -43,11 +43,11 @@ class Wrench:
         return size_in * 25.4
 
     @property
-    def profile_width(self):
+    def profile_width(self) -> float:
         return self.grip_width_mm + 1  # padding
 
     @property
-    def profile_height(self):
+    def profile_height(self) -> float:
         return self.grip_width_mm + 2  # padding
 
     def __str__(self) -> str:
