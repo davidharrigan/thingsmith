@@ -1,32 +1,27 @@
-from pyfinity import socket
-
+from pyfinity import drive_socket as socket
 
 if __name__ == "__main__":
     try:
         from ocp_vscode import show_object
 
+        builder = socket.SocketBuilder().metric().height(26)
         sockets = [
-            socket.Socket(10, diameter_mm=17.16, height_mm=26,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(11, diameter_mm=17.21, height_mm=26,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(12, diameter_mm=17.30, height_mm=26,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(13, diameter_mm=18.26, height_mm=26,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(14, diameter_mm=19.70, height_mm=26,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(15, diameter_mm=20.56, height_mm=26,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(16, diameter_mm=22.17, height_mm=29,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(17, diameter_mm=23.49, height_mm=29,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(18, diameter_mm=24.27, height_mm=29,
-                          unit=socket.Unit.METRIC),
-            socket.Socket(19, diameter_mm=25.79, height_mm=29,
-                          unit=socket.Unit.METRIC),
+            builder.size(10).diameter(17.16).build(),
+            builder.size(11).diameter(17.21).build(),
+            builder.size(12).diameter(17.30).build(),
+            builder.size(13).diameter(18.26).build(),
+            builder.size(14).diameter(19.70).build(),
+            builder.size(15).diameter(20.56).build(),
         ]
+
+        builder = builder.height(29)
+        sockets.extend([
+            builder.size(16).diameter(22.17).build(),
+            builder.size(17).diameter(23.49).build(),
+            builder.size(18).diameter(24.27).build(),
+            builder.size(19).diameter(25.79).build(),
+        ])
+
         o = socket.Organizer(sockets)
         show_object(o)
 

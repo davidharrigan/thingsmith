@@ -26,7 +26,7 @@ from pyfinity._gridfinity import (
     OrganizerFrame,
 )
 from pyfinity._gridfinity.block import num_grid_for_mm
-from pyfinity.socket._socket import Socket
+from pyfinity.drive_socket._socket import Socket
 
 default_base_color = Color(0x8B9DAA)
 default_label_color = Color(0xFFFFFF)
@@ -150,7 +150,12 @@ class Organizer(BasePartObject):
         base.part.label = "Base"
         return base
 
-    def _build_insert_labels(self, spec: InternalSpec, base: BuildPart, color: Color = default_label_color) -> BuildPart | None:
+    def _build_insert_labels(
+        self,
+        spec: InternalSpec,
+        base: BuildPart,
+        color: Color = default_label_color,
+    ) -> BuildPart | None:
         top_face = base.faces().sort_by(Axis.Z)[-1]
         origin = top_face.edges().group_by(
             Axis.X)[0].sort_by(Axis.Y)[0].vertices()[0]

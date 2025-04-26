@@ -1,6 +1,5 @@
 from pyfinity import wrench
 
-
 if __name__ == "__main__":
     try:
         from ocp_vscode import show_object
