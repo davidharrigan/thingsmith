@@ -85,6 +85,7 @@ class InternalSpec(OrganizerSpec):
 class Organizer(BasePartObject):
     parts: list[Part]
     base: BuildPart
+    name: str
 
     def __init__(
         self,
@@ -107,7 +108,21 @@ class Organizer(BasePartObject):
             if labels:
                 parts.append(labels.part)
 
-        super().__init__(Part(label="Socket Organizer", children=parts), rotation, align, mode)
+        self.name = self._generate_name(spec)
+
+        super().__init__(Part(label=self.name, children=parts), rotation, align, mode)
+
+    def _generate_name(self, spec: InternalSpec) -> str:
+        units = {s.unit for s in spec.socket_set if s.unit}
+
+        name = "socket-organizer"
+        if len(units) == 1:
+            sizes = [s.size for s in spec.socket_set]
+            smallest = min(sizes)
+            largest = max(sizes)
+            name += f"-{units.pop().name.lower()}[{smallest}-{largest}]"
+        return name
+
 
     @staticmethod
     def _next_insert(spec: InternalSpec) -> Generator[tuple[Socket, float]]:
