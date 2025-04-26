@@ -1,25 +1,15 @@
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+[project]
 name = "pyfinity"
 version = "0.1.0"
-description = ""
-authors = ["David Harrigan <davidharrigan@users.noreply.github.com>"]
+description = "Add your description here"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = ">=3.10,<3.13"
-build123d = ">=0.9.0,<0.10"
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.11.2"
-mypy = "^1.15.0"
-ocp-vscode = "^2.6.4"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "ocp-vscode>=2.7.1",
+  "build123d>=0.9.0,<0.10",
+  "ruff>=0.11.7",
+  "mypy>=1.15.0",
+]
 
 [tool.pyright]
 # see https://microsoft.github.io/pyright/#/configuration?id=pyright-configuration

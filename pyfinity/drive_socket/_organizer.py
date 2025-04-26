@@ -37,7 +37,7 @@ default_label_color = Color(0xFFFFFF)
 
 @dataclass
 class OrganizerSpec:
-    align: Literal["center", "bottom"] = "center"
+    align: Literal["center", "bottom"] = "bottom"
     align_y_offset: float = 0
 
     min_grid_x: int = 1
