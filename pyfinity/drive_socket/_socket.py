@@ -9,13 +9,18 @@ class Unit(Enum):
     SAE = auto()
 
 
+class Drive(Enum):
+    QUARTER = "1/4"
+    HALF = "1/2"
+
+
 @dataclass
 class Socket:
     size: float | Fraction
     diameter_mm: float = 0
     height_mm: float = 0
     unit: Unit = Unit.METRIC
-    drive: str | None = None
+    drive: str | Drive | None = None
 
     def __str__(self) -> str:
         return f"{self.size}"
@@ -70,7 +75,7 @@ class SocketBuilder:
         new_params["unit"] = value
         return cast("Self", self.__class__(new_params))
 
-    def drive(self, value: str | None) -> Self:
+    def drive(self, value: str | Drive) -> Self:
         """Set the drive parameter."""
         new_params = self._params.copy()
         new_params["drive"] = value
