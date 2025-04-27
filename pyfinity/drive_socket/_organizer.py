@@ -22,7 +22,6 @@ from build123d import (
     fillet,
     split,
 )
-from ocp_vscode import show_object
 
 from pyfinity._gridfinity import (
     GF,
@@ -179,7 +178,7 @@ class Organizer(BasePartObject):
                     x = distance + (s.diameter_mm + spec.insert_diameter_offset) / 2
                     with Locations((x, spec.edge_padding_y)):
                         Text(f"{s}", spec.insert_labels_size,
-                             align=(Align.CENTER, Align.MIN))
+                             align=(Align.CENTER, Align.MIN), font=spec.font)
             extrude(amount=0.75)
 
         if not labels.part:
@@ -211,7 +210,7 @@ class Organizer(BasePartObject):
 
         with BuildPart() as label:
             with BuildSketch(Plane(origin=origin)):
-                Text(spec.organizer_label, 6, align=(Align.MIN, Align.MAX))
+                Text(spec.organizer_label, 6, align=(Align.MIN, Align.MAX), font=spec.font)
             extrude(amount=0.75)
 
         if not label.part:

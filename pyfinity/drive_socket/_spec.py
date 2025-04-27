@@ -52,6 +52,7 @@ class OrganizerSpec:
     """
 
     sockets: list[Socket]
+    font: str = "Arial Rounded MT Bold"
 
     align: Literal["center", "bottom"] = "bottom"
     align_offset: float = 0
