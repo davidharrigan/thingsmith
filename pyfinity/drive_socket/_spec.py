@@ -47,6 +47,7 @@ class OrganizerSpec:
 
         organizer_label: Text label for the organizer face.
         organizer_label_padding: Custom (x,y) padding for organizer label in mm. Defaults to edge_padding.
+        organizer_split_face_plate: Split a part of the base as a separate part. Useful to select for coloring.
 
     """
 
@@ -75,6 +76,7 @@ class OrganizerSpec:
 
     organizer_label: str = ""
     organizer_label_padding: tuple[float, float] | None = None
+    organizer_split_face_plate: float = 0
 
     @property
     def grid_x(self) -> int:

@@ -37,6 +37,7 @@ def quarter_in_mm_sockets() -> socket.Organizer:
         base_height=8,
         insert_depth=4,
         align='center',
+        organizer_split_face_plate=2,
     )
     return socket.Organizer(spec)
 

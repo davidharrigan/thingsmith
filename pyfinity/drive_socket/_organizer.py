@@ -8,6 +8,7 @@ from build123d import (
     BuildSketch,
     Circle,
     Color,
+    Keep,
     Locations,
     Mode,
     Part,
@@ -19,7 +20,9 @@ from build123d import (
     chamfer,
     extrude,
     fillet,
+    split,
 )
+from ocp_vscode import show_object
 
 from pyfinity._gridfinity import (
     GF,
@@ -28,9 +31,9 @@ from pyfinity._gridfinity import (
 from pyfinity.drive_socket._socket import Drive, Socket
 from pyfinity.drive_socket._spec import OrganizerSpec
 
-default_base_color = Color(0x8B9DAA)
+default_face_plate_color = Color(0x1F79E5)
+default_base_color = Color(0x000000)
 default_label_color = Color(0xFFFFFF)
-
 
 
 def _next_insert(spec: OrganizerSpec) -> Generator[tuple[Socket, float]]:
@@ -42,8 +45,6 @@ def _next_insert(spec: OrganizerSpec) -> Generator[tuple[Socket, float]]:
 
 class Organizer(BasePartObject):
     spec: OrganizerSpec
-    parts: list[Part]
-    base: BuildPart
     name: str
 
     def __init__(
@@ -59,20 +60,21 @@ class Organizer(BasePartObject):
         base = self._build_base(spec)
         if not base:
             return
-        parts.append(base.part)
+        parts.append(base)
 
         if spec.insert_labels:
             labels = self._build_insert_labels(spec, base)
-            if labels:
+            if labels and labels.part:
+                self.labels = labels.part
                 parts.append(labels.part)
 
         if spec.organizer_label:
             label = self._build_face_label(spec, base)
-            if label:
+            if label and label.part:
+                self.label = label.part
                 parts.append(label.part)
 
         self.name = self._generate_name()
-
         super().__init__(Part(label=self.name, children=parts), rotation, align, mode)
 
     def _generate_name(self) -> str:
@@ -98,7 +100,7 @@ class Organizer(BasePartObject):
         return name
 
     @staticmethod
-    def _build_base(spec: OrganizerSpec, color: Color = default_base_color) -> BuildPart | None:
+    def _build_base(spec: OrganizerSpec, color: Color = default_base_color) -> Part | None:
         with BuildPart() as base:
             OrganizerFrame(
                 height=spec.base_height,
@@ -142,17 +144,25 @@ class Organizer(BasePartObject):
                 chamfer(edges[0], length=spec.insert_chamfer_bottom)
                 chamfer(edges[-1], length=spec.insert_chamfer_top)
 
-        if not base.part:
+            if spec.organizer_split_face_plate:
+                split(bisect_by=Plane(base.faces().sort_by(Axis.Z)[-1]).offset(-spec.organizer_split_face_plate), keep=Keep.BOTH)
+
+        solids = base.solids().sort_by(Axis.Z)
+        if len(solids) == 0:
             return None
 
-        base.part.color = color
-        base.part.label = "Base"
-        return base
+        solids[0].label = "Base"
+        solids[0].color = color
+
+        if spec.organizer_split_face_plate:
+            solids[1].label = "Face Plate"
+            solids[1].color = default_face_plate_color
+        return Part(children=solids, label="Base")
 
     @staticmethod
     def _build_insert_labels(
         spec: OrganizerSpec,
-        base: BuildPart,
+        base: Part,
         color: Color = default_label_color,
     ) -> BuildPart | None:
         top_face = base.faces().sort_by(Axis.Z)[-1]
@@ -182,7 +192,7 @@ class Organizer(BasePartObject):
     @staticmethod
     def _build_face_label(
         spec: OrganizerSpec,
-        base: BuildPart,
+        base: Part,
         color: Color = default_label_color,
     ) -> BuildPart | None:
         if spec.organizer_label_padding is None:
