@@ -81,13 +81,21 @@ class SocketBuilder:
         new_params["drive"] = value
         return cast("Self", self.__class__(new_params))
 
-    def metric(self) -> Self:
-        """Set the unit to METRIC."""
-        return self.unit(Unit.METRIC)
+    def quarter_in(self) -> Self:
+        return self.drive(Drive.QUARTER)
 
-    def sae(self) -> Self:
+    def half_in(self) -> Self:
+        return self.drive(Drive.HALF)
+
+    def metric(self, size: float) -> Self:
+        """Set the unit to METRIC."""
+        return self.unit(Unit.METRIC).size(size)
+
+    def sae(self, size: Fraction | str) -> Self:
         """Set the unit to SAE."""
-        return self.unit(Unit.SAE)
+        if isinstance(size, str):
+            size = Fraction(size)
+        return self.unit(Unit.SAE).size(size)
 
     def build(self) -> Socket:
         """

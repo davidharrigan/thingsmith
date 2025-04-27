@@ -18,18 +18,18 @@ from pyfinity import drive_socket as socket
 
 
 def quarter_in_mm_sockets() -> socket.Organizer:
-    builder = socket.SocketBuilder().metric().height(25)
+    builder = socket.SocketBuilder().height(25)
     sockets = [
-        builder.size(4).diameter(11.9).build(),
-        builder.size(5).diameter(11.9).build(),
-        builder.size(6).diameter(11.9).build(),
-        builder.size(7).diameter(11.9).build(),
-        builder.size(8).diameter(11.9).build(),
-        builder.size(9).diameter(13.1).build(),
-        builder.size(10).diameter(14.6).build(),
-        builder.size(11).diameter(15.9).build(),
-        builder.size(12).diameter(16.8).build(),
-        builder.size(13).diameter(17.2).build(),
+        builder.metric(4).diameter(11.9).build(),
+        builder.metric(5).diameter(11.9).build(),
+        builder.metric(6).diameter(11.9).build(),
+        builder.metric(7).diameter(11.9).build(),
+        builder.metric(8).diameter(11.9).build(),
+        builder.metric(9).diameter(13.1).build(),
+        builder.metric(10).diameter(14.6).build(),
+        builder.metric(11).diameter(15.9).build(),
+        builder.metric(12).diameter(16.8).build(),
+        builder.metric(13).diameter(17.2).build(),
     ]
     spec = socket.OrganizerSpec(
         sockets,
@@ -42,18 +42,18 @@ def quarter_in_mm_sockets() -> socket.Organizer:
     return socket.Organizer(spec)
 
 def quarter_in_mm_sockets_bottom() -> socket.Organizer:
-    builder = socket.SocketBuilder().metric().height(25)
+    builder = socket.SocketBuilder().height(25)
     sockets = [
-        builder.size(4).diameter(11.9).build(),
-        builder.size(5).diameter(11.9).build(),
-        builder.size(6).diameter(11.9).build(),
-        builder.size(7).diameter(11.9).build(),
-        builder.size(8).diameter(11.9).build(),
-        builder.size(9).diameter(13.1).build(),
-        builder.size(10).diameter(14.6).build(),
-        builder.size(11).diameter(15.9).build(),
-        builder.size(12).diameter(16.8).build(),
-        builder.size(13).diameter(17.2).build(),
+        builder.metric(4).diameter(11.9).build(),
+        builder.metric(5).diameter(11.9).build(),
+        builder.metric(6).diameter(11.9).build(),
+        builder.metric(7).diameter(11.9).build(),
+        builder.metric(8).diameter(11.9).build(),
+        builder.metric(9).diameter(13.1).build(),
+        builder.metric(10).diameter(14.6).build(),
+        builder.metric(11).diameter(15.9).build(),
+        builder.metric(12).diameter(16.8).build(),
+        builder.metric(13).diameter(17.2).build(),
     ]
     spec = socket.OrganizerSpec(
         sockets,
@@ -61,25 +61,24 @@ def quarter_in_mm_sockets_bottom() -> socket.Organizer:
         base_height=8,
         insert_depth=4,
         align='bottom',
+        organizer_name_suffix='-bottom',
     )
-    o = socket.Organizer(spec)
-    o.label += '-bottom'
-    return o
+    return socket.Organizer(spec)
 
 
 def half_in_mm_sockets() -> socket.Organizer:
-    builder = socket.SocketBuilder().metric()
+    builder = socket.SocketBuilder()
     sockets = [
-        builder.size(10).diameter(17.16).build(),
-        builder.size(11).diameter(17.21).build(),
-        builder.size(12).diameter(17.30).build(),
-        builder.size(13).diameter(18.26).build(),
-        builder.size(14).diameter(19.70).build(),
-        builder.size(15).diameter(20.56).build(),
-        builder.size(16).diameter(22.17).build(),
-        builder.size(17).diameter(23.49).build(),
-        builder.size(18).diameter(24.27).build(),
-        builder.size(19).diameter(25.79).build(),
+        builder.metric(10).diameter(17.16).build(),
+        builder.metric(11).diameter(17.21).build(),
+        builder.metric(12).diameter(17.30).build(),
+        builder.metric(13).diameter(18.26).build(),
+        builder.metric(14).diameter(19.70).build(),
+        builder.metric(15).diameter(20.56).build(),
+        builder.metric(16).diameter(22.17).build(),
+        builder.metric(17).diameter(23.49).build(),
+        builder.metric(18).diameter(24.27).build(),
+        builder.metric(19).diameter(25.79).build(),
     ]
     spec = socket.OrganizerSpec(
         sockets,
@@ -88,6 +87,19 @@ def half_in_mm_sockets() -> socket.Organizer:
     )
     return socket.Organizer(spec)
 
+def half_in_sae() -> socket.Organizer:
+    builder = socket.SocketBuilder().half_in()
+    sockets = [
+        builder.sae("1/4").diameter(15).build(),
+        builder.sae("1/2").diameter(20).build(),
+        builder.sae("3/4").diameter(25).build(),
+    ]
+    spec = socket.OrganizerSpec(
+        sockets,
+        base_height=10,
+        insert_depth=5,
+    )
+    return socket.Organizer(spec)
 
 if __name__ == "__main__":
     try:
@@ -97,6 +109,7 @@ if __name__ == "__main__":
             quarter_in_mm_sockets(),
             quarter_in_mm_sockets_bottom(),
             half_in_mm_sockets(),
+            half_in_sae(),
         ]
         offset = 10
         for i, o in enumerate(objs):
