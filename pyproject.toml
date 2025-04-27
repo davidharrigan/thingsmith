@@ -5,10 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
-  "ocp-vscode>=2.7.1",
   "build123d>=0.9.0,<0.10",
-  "ruff>=0.11.7",
-  "mypy>=1.15.0",
 ]
 
 [tool.pyright]
@@ -80,3 +77,9 @@ ban-relative-imports = "all"
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
+
+[dependency-groups]
+dev = [
+    "ocp-vscode>=2.7.1",
+    "pytest>=8.3.5",
+]

@@ -1,7 +1,19 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "ocp-vscode",
+#     "pyfinity",
+# ]
+#
+# [tool.uv.sources]
+# pyfinity = { path = "../", editable = true }
+# ///
 from build123d import (
     Axis,
     Location,
 )
+
+from ocp_vscode import show_object
 from pyfinity import drive_socket as socket
 
 
@@ -24,6 +36,7 @@ def quarter_in_mm_sockets() -> socket.Organizer:
         organizer_label='CENTER',
         base_height=8,
         insert_depth=4,
+        align='center',
     )
     return socket.Organizer(spec)
 

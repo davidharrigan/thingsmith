@@ -1,6 +1,6 @@
-.PHONY: lint format all
+.PHONY: lint format test
 
-all: format lint
+all: test lint
 
 format:
 	uv run ruff check --fix
@@ -8,6 +8,9 @@ format:
 lint:
 	uv run ruff check
 	uv run mypy ./pyfinity
+
+test:
+	uv run pytest
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
