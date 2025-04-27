@@ -20,11 +20,12 @@ def quarter_in_mm_sockets() -> socket.Organizer:
         builder.size(13).diameter(17.2).build(),
     ]
     spec = socket.OrganizerSpec(
-        face_label='C',
-        height=8,
+        sockets,
+        organizer_label='CENTER',
+        base_height=8,
         insert_depth=4,
     )
-    return socket.Organizer(sockets, spec)
+    return socket.Organizer(spec)
 
 def quarter_in_mm_sockets_bottom() -> socket.Organizer:
     builder = socket.SocketBuilder().metric().height(25)
@@ -41,12 +42,13 @@ def quarter_in_mm_sockets_bottom() -> socket.Organizer:
         builder.size(13).diameter(17.2).build(),
     ]
     spec = socket.OrganizerSpec(
-        face_label='B',
-        height=8,
+        sockets,
+        organizer_label='BOTTOM',
+        base_height=8,
         insert_depth=4,
         align='bottom',
     )
-    o = socket.Organizer(sockets, spec)
+    o = socket.Organizer(spec)
     o.label += '-bottom'
     return o
 
@@ -66,11 +68,11 @@ def half_in_mm_sockets() -> socket.Organizer:
         builder.size(19).diameter(25.79).build(),
     ]
     spec = socket.OrganizerSpec(
-        height=10,
+        sockets,
+        base_height=10,
         insert_depth=5,
     )
-
-    return socket.Organizer(sockets, spec)
+    return socket.Organizer(spec)
 
 
 if __name__ == "__main__":
