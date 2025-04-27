@@ -73,7 +73,7 @@ class Organizer(BasePartObject):
                 self.label = label.part
                 parts.append(label.part)
 
-        self.name = self._generate_name()
+        self.name = self._generate_name() + spec.organizer_name_suffix
         super().__init__(Part(label=self.name, children=parts), rotation, align, mode)
 
     def _generate_name(self) -> str:

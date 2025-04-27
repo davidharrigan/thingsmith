@@ -78,6 +78,7 @@ class OrganizerSpec:
     organizer_label: str = ""
     organizer_label_padding: tuple[float, float] | None = None
     organizer_split_face_plate: float = 0
+    organizer_name_suffix: str = ""
 
     @property
     def grid_x(self) -> int:
