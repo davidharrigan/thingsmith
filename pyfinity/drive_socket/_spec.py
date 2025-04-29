@@ -52,6 +52,7 @@ class OrganizerSpec:
     """
 
     sockets: list[Socket]
+    name: str | None = None
     font: str = "Arial Rounded MT Bold"
 
     align: Literal["center", "bottom"] = "bottom"
@@ -83,8 +84,7 @@ class OrganizerSpec:
     @property
     def grid_x(self) -> int:
         min_offset_total = (len(self.sockets) - 1) * self.insert_offset_min
-        required_grid_x = num_grid_for_mm(
-            self.insert_width_total + min_offset_total + (self.edge_padding_x * 2))
+        required_grid_x = num_grid_for_mm(self.insert_width_total + min_offset_total + (self.edge_padding_x * 2))
         return max(required_grid_x, self.grid_x_min)
 
     @property
@@ -103,4 +103,3 @@ class OrganizerSpec:
     def insert_offset(self) -> float:
         total_free = self.length_x - self.edge_padding_x * 2 - self.insert_width_total
         return total_free / (len(self.sockets) - 1)
-
