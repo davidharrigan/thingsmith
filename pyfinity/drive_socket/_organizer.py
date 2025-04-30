@@ -32,7 +32,6 @@ from pyfinity._gridfinity import (
 from pyfinity.drive_socket._socket import Socket
 from pyfinity.drive_socket._spec import OrganizerSpec
 
-default_face_plate_color = Color(0x1F79E5)
 default_base_color = Color(0x000000)
 default_label_color = Color(0xFFFFFF)
 
@@ -145,7 +144,7 @@ class Organizer(BasePartObject):
 
         if spec.organizer_split_face_plate:
             solids[1].label = "Face Plate"
-            solids[1].color = default_face_plate_color
+            solids[1].color = spec.face_color
         return Part(children=solids, label="Base")
 
     @staticmethod

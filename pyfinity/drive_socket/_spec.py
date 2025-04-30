@@ -3,6 +3,7 @@ from typing import Literal
 
 from build123d import (
     MM,
+    Color,
 )
 
 from pyfinity._gridfinity import (
@@ -10,6 +11,8 @@ from pyfinity._gridfinity import (
 )
 from pyfinity._gridfinity.block import num_grid_for_mm
 from pyfinity.drive_socket._socket import Socket
+
+default_face_plate_color = Color(0x1F79E5)
 
 
 @dataclass
@@ -80,6 +83,7 @@ class OrganizerSpec:
     organizer_label_padding: tuple[float, float] | None = None
     organizer_split_face_plate: float = 0
     organizer_name_suffix: str = ""
+    face_color: Color = default_face_plate_color
 
     @property
     def grid_x(self) -> int:
