@@ -43,6 +43,7 @@ class SocketType(Flag):
     TWELVE_POINT = auto()
     SIX_POINT = auto()
     BIT = auto()
+    BIT_ADAPTER = auto()
 
     # Custom/specialized socket type
     CUSTOM = auto()

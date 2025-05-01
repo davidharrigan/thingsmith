@@ -106,4 +106,6 @@ class OrganizerSpec:
     @property
     def insert_offset(self) -> float:
         total_free = self.length_x - self.edge_padding_x * 2 - self.insert_width_total
+        if len(self.sockets) == 1:
+            return 0
         return total_free / (len(self.sockets) - 1)
