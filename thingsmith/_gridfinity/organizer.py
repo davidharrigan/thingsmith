@@ -9,8 +9,8 @@ from build123d import (
     extrude,
 )
 
-from pyfinity._gridfinity.block import BlockGrid
-from pyfinity._gridfinity.spec import GF
+from thingsmith._gridfinity.block import BlockGrid
+from thingsmith._gridfinity.spec import GF
 
 
 class OrganizerFrame(BasePartObject):

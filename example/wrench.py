@@ -2,17 +2,17 @@
 # requires-python = ">=3.12"
 # dependencies = [
 #     "ocp-vscode",
-#     "pyfinity",
+#     "thingsmith",
 # ]
 #
 # [tool.uv.sources]
-# pyfinity = { path = "../", editable = true }
+# thingsmith = { path = "../", editable = true }
 # ///
 import argparse
 
 from build123d import export_stl
 from ocp_vscode import show_object
-from pyfinity import wrench
+from thingsmith import wrench
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate socket organizers")

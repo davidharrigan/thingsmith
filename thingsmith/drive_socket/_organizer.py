@@ -25,12 +25,12 @@ from build123d import (
     split,
 )
 
-from pyfinity._gridfinity import (
+from thingsmith._gridfinity import (
     GF,
     OrganizerFrame,
 )
-from pyfinity.drive_socket._socket import Socket
-from pyfinity.drive_socket._spec import OrganizerSpec
+from thingsmith.drive_socket._socket import Socket
+from thingsmith.drive_socket._spec import OrganizerSpec
 
 default_base_color = Color(0x000000)
 default_label_color = Color(0xFFFFFF)

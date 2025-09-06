@@ -7,10 +7,10 @@ format:
 
 lint:
 	uv run ruff check
-	uv run mypy ./pyfinity
+	uv run mypy ./thingsmith
 
 test:
-	uv run pytest
+	uv run -m pytest
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +

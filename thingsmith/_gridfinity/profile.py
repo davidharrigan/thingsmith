@@ -12,7 +12,7 @@ from build123d import (
     make_face,
 )
 
-from pyfinity._gridfinity.spec import GF
+from thingsmith._gridfinity.spec import GF
 
 
 @dataclass(frozen=True)

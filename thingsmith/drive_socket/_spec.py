@@ -6,11 +6,11 @@ from build123d import (
     Color,
 )
 
-from pyfinity._gridfinity import (
+from thingsmith._gridfinity import (
     GF,
 )
-from pyfinity._gridfinity.block import num_grid_for_mm
-from pyfinity.drive_socket._socket import Socket
+from thingsmith._gridfinity.block import num_grid_for_mm
+from thingsmith.drive_socket._socket import Socket
 
 default_face_plate_color = Color(0x1F79E5)
 

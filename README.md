@@ -1,4 +1,4 @@
-# pyfinity
+# thingsmith
 
 - uv sync
 

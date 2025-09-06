@@ -2,11 +2,11 @@
 # requires-python = ">=3.12"
 # dependencies = [
 #     "ocp-vscode",
-#     "pyfinity",
+#     "thingsmith",
 # ]
 #
 # [tool.uv.sources]
-# pyfinity = { path = "../", editable = true }
+# thingsmith = { path = "../", editable = true }
 # ///
 
 import argparse
@@ -15,8 +15,8 @@ from typing import NamedTuple
 
 from build123d import Axis, Location, Mesher, export_stl
 from ocp_vscode import show_object
-from pyfinity import drive_socket as socket
-from pyfinity.drive_socket import SocketType
+from thingsmith import drive_socket as socket
+from thingsmith.drive_socket import SocketType
 
 
 class Dimension(NamedTuple):

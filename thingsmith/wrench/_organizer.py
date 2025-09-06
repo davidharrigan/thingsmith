@@ -19,13 +19,13 @@ from build123d import (
     fillet,
 )
 
-from pyfinity._gridfinity import (
+from thingsmith._gridfinity import (
     GF,
     OrganizerFrame,
 )
-from pyfinity._gridfinity.block import num_grid_for_mm
-from pyfinity.wrench._profile import InsertProfile
-from pyfinity.wrench._wrench import Wrench
+from thingsmith._gridfinity.block import num_grid_for_mm
+from thingsmith.wrench._profile import InsertProfile
+from thingsmith.wrench._wrench import Wrench
 
 
 @dataclass

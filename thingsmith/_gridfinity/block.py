@@ -21,8 +21,8 @@ from build123d import (
     sweep,
 )
 
-from pyfinity._gridfinity.profile import BaseplateSections, Profile
-from pyfinity._gridfinity.spec import GF
+from thingsmith._gridfinity.profile import BaseplateSections, Profile
+from thingsmith._gridfinity.spec import GF
 
 
 def num_grid_for_mm(length_mm: float) -> int:

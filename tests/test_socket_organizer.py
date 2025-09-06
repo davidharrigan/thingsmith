@@ -1,6 +1,6 @@
 import pytest
 from build123d import Axis
-from pyfinity import drive_socket as socket
+from thingsmith import drive_socket as socket
 
 
 @pytest.fixture

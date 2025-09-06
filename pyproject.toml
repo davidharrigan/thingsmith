@@ -1,16 +1,17 @@
 [project]
-name = "pyfinity"
+name = "thingsmith"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
-dependencies = [
-  "build123d>=0.9.0,<0.10",
-]
+dependencies = ["build123d>=0.9.0,<0.10"]
+
+[tool.uv]
+package = true
 
 [tool.pyright]
 # see https://microsoft.github.io/pyright/#/configuration?id=pyright-configuration
-include = ["pyfinity"]
+include = ["thingsmith"]
 exclude = ["**/node_modules", "**/__pycache__", "**/.venv"]
 reportMissingImports = true
 reportWildcardImportFromLibrary = false
@@ -41,7 +42,7 @@ lint.ignore = [
 ]
 line-length = 120
 show-fixes = true
-src = ["pyfinity"]
+src = ["thingsmith"]
 target-version = "py312"
 
 
@@ -83,7 +84,4 @@ combine-as-imports = true
 ignore_missing_imports = true
 
 [dependency-groups]
-dev = [
-    "ocp-vscode>=2.7.1",
-    "pytest>=8.3.5",
-]
+dev = ["ocp-vscode>=2.7.1", "pytest>=8.3.5"]
