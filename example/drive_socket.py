@@ -96,7 +96,7 @@ def metric_organizers() -> list[socket.Organizer]:
                     Dimension(12, 16.6),
                     Dimension(13, 17.6),
                 ],
-            )
+            ),
         ),
         socket.Organizer(
             make_spec(
@@ -114,7 +114,7 @@ def metric_organizers() -> list[socket.Organizer]:
                     Dimension(18, 24.27),
                     Dimension(19, 25.79),
                 ],
-            )
+            ),
         ),
         socket.Organizer(
             make_spec(

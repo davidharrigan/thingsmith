@@ -63,6 +63,7 @@ max-complexity = 10
 "__init__.py" = ["F401", "F403", "F405"]
 "tests/*" = ["ANN", "ARG", "INP001", "S101"]
 "logger.py" = ["N815"]
+"example/*" = ["T201"]
 
 
 [tool.ruff.lint.pylint]
