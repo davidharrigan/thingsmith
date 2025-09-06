@@ -84,9 +84,9 @@ class Organizer(BasePartObject):
         units = reduce(operator.or_, [reduce(operator.or_, s.unit) for s in spec.sockets if s.unit])
         types = reduce(operator.or_, [reduce(operator.or_, s.socket_type) for s in spec.sockets]) & ~units
         name = "socket-organizer"
-        name += f"-{'|'.join([u.name for u in units])}[{min(sizes)}-{max(sizes)}]"
+        name += f"-{'|'.join([u.name for u in units if u.name])}[{min(sizes)}-{max(sizes)}]"
         name += f"-drive[{','.join(drives)}]"
-        name += f"-type[{','.join([t.name for t in types])}]"
+        name += f"-type[{','.join([t.name for t in types if t.name])}]"
         return name
 
     @staticmethod
@@ -110,14 +110,14 @@ class Organizer(BasePartObject):
             elif spec.align == "bottom":
                 origin_y = top_face.edges().sort_by(Axis.Y)[0].edges()[0].vertices()[0].Y
                 align = (Align.MIN, Align.MIN)
-                y_offset = (spec.length_y - max([s.diameter_mm for s in spec.sockets])) / 2
+                y_offset = int((spec.length_y - max([s.diameter_mm for s in spec.sockets])) / 2)
             origin_x = top_face.edges().sort_by(Axis.X)[0].edges()[0].vertices()[0].X
             origin_z = spec.base_height + GF.HEIGHT_UNIT
             origin = Vector(X=origin_x, Y=origin_y, Z=origin_z)
 
-            y_offset += spec.align_offset
+            y_offset = int(y_offset + spec.align_offset)
             if spec.insert_labels:
-                y_offset += spec.insert_labels_size / 2
+                y_offset = int(y_offset + spec.insert_labels_size / 2)
 
             with BuildSketch(Plane(origin=origin)):
                 for s, distance in _next_insert(spec):

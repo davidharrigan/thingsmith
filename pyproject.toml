@@ -79,6 +79,9 @@ ban-relative-imports = "all"
 [tool.ruff.lint.isort]
 combine-as-imports = true
 
+[tool.mypy]
+ignore_missing_imports = true
+
 [dependency-groups]
 dev = [
     "ocp-vscode>=2.7.1",
