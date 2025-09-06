@@ -247,11 +247,11 @@ if __name__ == "__main__":
             show_object(o)
         for output in args.output:
             if output == "stl":
-                f = f"stl/{o.name}.stl"
+                f = f"example/stl/{o.name}.stl"
                 ok = export_stl(o, f)
                 print(f"{'✅' if ok else '🚫'} {f}")
             if output == "3mf":
-                f = f"3mf/{o.name}.model.3mf"
+                f = f"example/3mf/{o.name}.model.3mf"
                 exporter = Mesher()
                 exporter.add_shape(o, part_number=o.name)
                 exporter.add_code_to_metadata()
